@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./QuillComponent";
+import QuillComponent from "./QuillComponent";
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<QuillComponent />, document.getElementById("root"));

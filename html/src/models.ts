@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import * as Quill from "quill";
 
 export interface WebViewQuillJSProps {
@@ -14,6 +13,7 @@ export interface WebViewQuillJSProps {
   onLoadEnd?: () => void;
   onLoadStart?: () => void;
   onMessageReceived?: (message: any) => void;
+  noPadding?: boolean;
 }
 export enum WebviewQuillJSEvents {
   QUILLJS_COMPONENT_MOUNTED = "QUILLJS_COMPONENT_MOUNTED",
@@ -28,7 +28,8 @@ export enum WebviewQuillJSEvents {
   ON_BLUR = "ON_BLUR",
   ON_KEY_PRESS = "ON_KEY_PRESS",
   ON_KEY_DOWN = "ON_KEY_DOWN",
-  ON_KEY_UP = "ON_KEY_UP"
+  ON_KEY_UP = "ON_KEY_UP",
+  ON_LINK_PRESS = "ON_LINK_PRESS"
 }
 
 export type WebviewQuillJSMessage = {
@@ -40,7 +41,8 @@ export type WebviewQuillJSMessage = {
 
 export type StartupMessage = {
   backgroundColor?: string;
-  content?: string | object | Quill.Delta;
+  content?: Quill.Delta | string | object;
   doShowQuillComponentDebugMessages?: boolean;
   isReadOnly?: boolean;
+  noPadding?: boolean;
 };

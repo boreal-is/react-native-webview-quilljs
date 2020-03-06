@@ -1,6 +1,7 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import "./theme.css";
 
 interface QuillComponentViewProps {
   addDebugMessage?: (message: string) => void;
@@ -20,6 +21,14 @@ interface QuillComponentViewProps {
   onKeyUp: (event: any) => void;
   quillComponentRef: React.RefObject<HTMLDivElement>;
 }
+
+const toolbarOptions = [
+  ['link'],
+  [{ 'list': 'bullet' }],
+  ['underline'],
+  ['italic'],
+  ['bold']
+];
 
 const QuillComponentView = ({
   backgroundColor,
@@ -48,13 +57,10 @@ const QuillComponentView = ({
   };
 
   const getModules = (): object => {
-    if (isReadOnly) {
-      return {
-        ...modules,
-        toolbar: false
-      };
-    }
-    return modules;
+    return {
+      ...modules,
+      toolbar: isReadOnly ? false : toolbarOptions
+    };
   };
 
   return (

@@ -1,5 +1,6 @@
 import * as React from "react";
 import "react-quill/dist/quill.snow.css";
+import "./theme.css";
 import QuillComponentView from "./QuillComponent.view";
 import { WebviewQuillJSMessage, WebviewQuillJSEvents } from "./models";
 import * as Quill from "quill";
@@ -13,6 +14,7 @@ interface State {
   doShowQuillComponentDebugMessages: boolean;
   isReadOnly: boolean;
   modules: object;
+  noPadding: boolean;
 }
 
 class QuillComponent extends React.Component<{}, State> {
@@ -22,14 +24,15 @@ class QuillComponent extends React.Component<{}, State> {
     super(props);
     this.quillComponentRef = React.createRef();
     this.state = {
-      backgroundColor: "#FAFAD2",
+      backgroundColor: "#fff",
       debugMessages: ["test"],
       containerHeight: null,
       content: null,
       defaultContent: null,
       doShowQuillComponentDebugMessages: false,
       isReadOnly: false,
-      modules: {}
+      modules: {},
+      noPadding: false
     };
   }
 
@@ -117,12 +120,15 @@ class QuillComponent extends React.Component<{}, State> {
   };
 
   componentDidMount = () => {
-    const { containerHeight } = this.state;
+    const { containerHeight, noPadding } = this.state;
     this.addEventListeners();
-
-    // set the height to be used for the container window
-    if (this.quillComponentRef && containerHeight === null) {
-      this.setContainerHeight();
+    
+    if (noPadding) {
+      this.setNoPadding(true);
+    } else {
+      if (this.quillComponentRef && containerHeight === null) {
+        this.setContainerHeight();
+      }
     }
 
     this.sendMessage({
@@ -131,11 +137,24 @@ class QuillComponent extends React.Component<{}, State> {
   };
 
   componentDidUpdate = (prevProps: {}, prevState: State) => {
-    const { isReadOnly } = this.state;
+    const { isReadOnly, noPadding } = this.state;
     if (isReadOnly !== prevState.isReadOnly) {
       this.setContainerHeight();
     }
+    if (!prevState.noPadding && noPadding) {
+      this.setNoPadding(true);
+    } else if (prevState.noPadding && !noPadding) {
+      this.setNoPadding(false);
+    }
   };
+
+  private setNoPadding(noPadding: boolean) {
+    if (noPadding) {
+      document.getElementsByClassName('ql-editor')[0]?.classList.add('no-padding');
+    } else {
+      document.getElementsByClassName('ql-editor')[0]?.classList.remove('no-padding');
+    }
+  }
 
   private setContainerHeight = () => {
     const quillDivElement = this.quillComponentRef.current;
@@ -164,6 +183,7 @@ class QuillComponent extends React.Component<{}, State> {
     if (document) {
       document.addEventListener("message", this.handleMessage);
       this.addDebugMessage("set document listeners");
+      document.addEventListener("click", this.handleOnClick);
       this.sendMessage({
         msg: WebviewQuillJSEvents.DOCUMENT_EVENT_LISTENER_ADDED
       });
@@ -192,12 +212,30 @@ class QuillComponent extends React.Component<{}, State> {
     }
   };
 
+  private handleOnClick = (event: any) => {
+    const target = event.target;
+    if (!target) {
+      return;
+    }
+    const parentAnchor = target.closest('a');
+    if (parentAnchor && parentAnchor.href && parentAnchor.tagName === 'A' && (parentAnchor.className === 'ql-preview' || this.state.isReadOnly)) {
+      // User pressed on a link to navigate
+      event.preventDefault();
+      this.addDebugMessage("User clicked on a link");
+      this.sendMessage({
+        msg: WebviewQuillJSEvents.ON_LINK_PRESS,
+        payload: {
+          url: parentAnchor.href
+        }
+      });
+    }
+  }
+
   protected sendMessage = (message: WebviewQuillJSMessage) => {
     // @ts-ignore
     if (window.ReactNativeWebView) {
       // @ts-ignore
       window.ReactNativeWebView.postMessage(JSON.stringify(message));
-      console.log("sendMessage  ", JSON.stringify(message));
     }
   };
 
@@ -232,7 +270,7 @@ class QuillComponent extends React.Component<{}, State> {
         {doShowQuillComponentDebugMessages && (
           <div
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "#fff",
               maxHeight: "200px",
               overflow: "auto",
               padding: 5,

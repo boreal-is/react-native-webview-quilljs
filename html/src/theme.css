@@ -1,0 +1,40 @@
+.ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid #d8d8d8;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.ql-snow .ql-formats {
+  justify-content: center;
+}
+
+.ql-container.ql-snow {
+  border: none
+}
+
+.ql-snow.ql-toolbar button {
+  height: 30px;
+}
+
+.ql-editor {
+  font-size: 16px;
+}
+
+.ql-editor.no-padding {
+  padding: 4px 0 0 0;
+}
+
+.ql-snow .ql-stroke {
+  stroke: #3a4c65;
+}
+
+.ql-snow .ql-fill {
+  stroke: #3a4c65;
+}
+
+.ql-snow.ql-toolbar:after, .ql-snow .ql-toolbar:after {
+  display: none;
+}

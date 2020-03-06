@@ -25,7 +25,6 @@ interface State {
 class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
   private webViewRef: any;
   static defaultProps = {
-    backgroundColor: "#FAEBD7",
     doShowDebugMessages: false,
     loadingIndicator: () => {
       return null;
@@ -105,14 +104,16 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
       backgroundColor,
       content,
       doShowQuillComponentDebugMessages,
-      isReadOnly
+      isReadOnly,
+      noPadding,
     } = this.props;
 
     const startupMessage: StartupMessage = {
       backgroundColor,
       content,
       doShowQuillComponentDebugMessages,
-      isReadOnly
+      isReadOnly,
+      noPadding
     };
 
     this.setState({ isLoading: false });
