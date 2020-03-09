@@ -36,6 +36,10 @@ class QuillComponent extends React.Component<{}, State> {
     };
   }
 
+  componentWillUnmount() {
+    this.removeEventListeners();
+  }
+
   onChange = (
     content: string,
     delta: Quill.Delta,
@@ -202,6 +206,22 @@ class QuillComponent extends React.Component<{}, State> {
       return;
     }
   };
+
+  private removeEventListeners = () => {
+    if (document) {
+      document.removeEventListener("message", this.handleMessage);
+      document.removeEventListener("click", this.handleOnClick);
+      this.sendMessage({
+        msg: WebviewQuillJSEvents.DOCUMENT_EVENT_LISTENER_ADDED
+      });
+    }
+    if (window) {
+      window.removeEventListener("message", this.handleMessage);
+      this.sendMessage({
+        msg: WebviewQuillJSEvents.WINDOW_EVENT_LISTENER_ADDED
+      });
+    }
+  }
 
   private handleMessage = (event: any & { data: State }) => {
     this.addDebugMessage(event.data);

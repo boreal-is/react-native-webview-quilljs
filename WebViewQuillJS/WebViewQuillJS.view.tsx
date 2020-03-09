@@ -66,7 +66,7 @@ class WebViewQuillJSView extends React.Component<Props> {
             startInLoadingState={true}
             onError={onError}
             originWhitelist={["*"]}
-            renderLoading={loadingIndicator || null}
+            renderLoading={loadingIndicator}
             source={{
               html: webviewContent
             }}
@@ -77,7 +77,7 @@ class WebViewQuillJSView extends React.Component<Props> {
         ) : null}
         <DebugMessageBox
           debugMessages={debugMessages}
-          doShowDebugMessages={doShowDebugMessages}
+          doShowDebugMessages={doShowDebugMessages || false}
         />
       </View>
     );
