@@ -22,9 +22,14 @@ interface State {
   webviewContent: string | null;
 }
 
+type CancellablePromise<T> = {
+  promise: Promise<T>,
+  cancel: () => void,
+}
+
 class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
   private webViewRef: any;
-  private isMounted = false;
+  private _isMounted = false;
 
   static defaultProps = {
     doShowDebugMessages: false,
@@ -47,18 +52,22 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
     this.webViewRef = null;
   }
 
-  componentDidMount = () => {
-    this.isMounted = true;
-    this.loadHTMLFile();
+  componentDidMount = async () => {
+    this._isMounted = true;
+    await this.loadHTMLFile();
   };
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   private loadHTMLFile = async () => {
     try {
-      let asset: Asset = await AssetUtils.resolveAsync(INDEX_FILE_PATH);
-      let fileString: string | false = this.isMounted && await FileSystem.readAsStringAsync(
-        asset.localUri!
+      let asset: Asset | false = this._isMounted && await AssetUtils.resolveAsync(INDEX_FILE_PATH);
+      let fileString: string | false = this._isMounted && await FileSystem.readAsStringAsync(
+        (asset as Asset).localUri!
       );
-      this.isMounted && this.setState({ webviewContent: fileString as string });
+      this._isMounted && this.setState({ webviewContent: fileString as string });
     } catch (error) {
       console.warn(error);
       console.warn("Unable to resolve index file");
