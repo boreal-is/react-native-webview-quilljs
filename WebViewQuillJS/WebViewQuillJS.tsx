@@ -24,6 +24,8 @@ interface State {
 
 class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
   private webViewRef: any;
+  private isMounted = false;
+
   static defaultProps = {
     doShowDebugMessages: false,
     loadingIndicator: () => {
@@ -46,17 +48,17 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
   }
 
   componentDidMount = () => {
+    this.isMounted = true;
     this.loadHTMLFile();
   };
 
   private loadHTMLFile = async () => {
     try {
       let asset: Asset = await AssetUtils.resolveAsync(INDEX_FILE_PATH);
-      let fileString: string = await FileSystem.readAsStringAsync(
+      let fileString: string | false = this.isMounted && await FileSystem.readAsStringAsync(
         asset.localUri!
       );
-
-      this.setState({ webviewContent: fileString });
+      this.isMounted && this.setState({ webviewContent: fileString as string });
     } catch (error) {
       console.warn(error);
       console.warn("Unable to resolve index file");
