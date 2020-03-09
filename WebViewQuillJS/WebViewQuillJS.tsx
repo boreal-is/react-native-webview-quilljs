@@ -18,8 +18,8 @@ const INDEX_FILE_PATH = require(`./assets/index.html`);
 
 interface State {
   debugMessages: string[];
-  isLoading: boolean;
-  webviewContent: string;
+  isLoading: boolean | null;
+  webviewContent: string | null;
 }
 
 class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
@@ -53,7 +53,7 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
     try {
       let asset: Asset = await AssetUtils.resolveAsync(INDEX_FILE_PATH);
       let fileString: string = await FileSystem.readAsStringAsync(
-        asset.localUri
+        asset.localUri!
       );
 
       this.setState({ webviewContent: fileString });
@@ -132,15 +132,21 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
   };
 
   private onError = (syntheticEvent: any) => {
-    this.props.onError(syntheticEvent);
+    if (this.props.onError) {
+      this.props.onError(syntheticEvent);
+    }
   };
   private onLoadEnd = () => {
     this.setState({ isLoading: false });
-    this.props.onLoadEnd();
+    if (this.props.onLoadEnd) {
+      this.props.onLoadEnd();
+    }
   };
   private onLoadStart = () => {
     this.setState({ isLoading: true });
-    this.props.onLoadStart();
+    if (this.props.onLoadStart) {
+      this.props.onLoadStart();
+    }
   };
 
   // Output rendered item to screen
@@ -164,7 +170,7 @@ class WebViewQuillJS extends React.Component<WebViewQuillJSProps, State> {
           onError={this.onError}
           onLoadEnd={this.onLoadEnd}
           onLoadStart={this.onLoadStart}
-          setWebViewRef={(ref: WebView) => {
+          setWebViewRef={ref => {
             this.webViewRef = ref;
           }}
         />

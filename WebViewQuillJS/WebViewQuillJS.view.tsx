@@ -6,20 +6,20 @@ import DebugMessageBox from "./DebugMessageBox";
 import { WebViewError } from "react-native-webview/lib/WebViewTypes";
 
 export interface Props {
-  backgroundColor: string;
+  backgroundColor?: string;
   debugMessages: string[];
-  doShowDebugMessages: boolean;
+  doShowDebugMessages?: boolean;
   handleMessage: (data: string) => void;
   webviewContent: string;
-  loadingIndicator: () => ReactElement;
+  loadingIndicator?: () => ReactElement;
   onError: (syntheticEvent: NativeSyntheticEvent<WebViewError>) => void;
   onLoadEnd: () => void;
   onLoadStart: () => void;
-  setWebViewRef: (ref: WebView) => void;
+  setWebViewRef: (ref: WebView | null) => void;
 }
 
 class WebViewQuillJSView extends React.Component<Props> {
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
   }
 
